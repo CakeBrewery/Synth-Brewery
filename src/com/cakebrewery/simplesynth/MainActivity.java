@@ -1,24 +1,30 @@
 package com.cakebrewery.simplesynth;
 
+import java.util.Locale;
+
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Spinner;
 import android.widget.ToggleButton;
 
 
 public class MainActivity extends ActionBarActivity {
 	
+	//Options
 	public final int AMP_MAX = 18000; 
 	public final int AMP_START = 18000; 
     public final double twopi = 2*Math.PI;
+	public final int sr = 44100;
 	
 	//App Components
 	Thread t; 
@@ -27,13 +33,20 @@ public class MainActivity extends ActionBarActivity {
 	SeekBar fSlider;
 	ToggleButton powerbtn; 
 	AudioTrack audioTrack; 
+	Spinner wf_selector; 
 
 	//Wave parameters
-	int sr = 44100; 
 	double fundamental = 220; 
 	int amp = 0; //initial amplitude is 0
-    double ph = 0.0; 
+    
+    //State Variables
     boolean envelope = false; 
+    double ph = 0.0; 
+    enum Waveform {
+    	SINE, SQUARE, SAW, CUSTOM1
+    }
+    
+    Waveform selected_waveform = Waveform.SINE;  
 	
 	//Envelope
 	int envCount = 0; 
@@ -109,6 +122,10 @@ public class MainActivity extends ActionBarActivity {
 	        	
 	        	//point power button to GUI widget
 	        	powerbtn = (ToggleButton) findViewById(R.id.power);
+	        	
+	        	//point spinner element to GUI widget
+	        	wf_selector = (Spinner) findViewById(R.id.wf_selector); 
+	        	
 	        	 	
 	        	//Seekbar listener
 	        	OnSeekBarChangeListener listener = new OnSeekBarChangeListener() {
@@ -130,6 +147,21 @@ public class MainActivity extends ActionBarActivity {
 	        
 		        int buffsize = AudioTrack.getMinBufferSize(sr, AudioFormat.CHANNEL_OUT_MONO, 
 		        												AudioFormat.ENCODING_PCM_16BIT);
+		        
+		        // Waveform Selector Listener
+		        wf_selector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		        	public void onItemSelected(AdapterView<?> arg0, View arg1, 
+		        			int position, long id) {
+		        		wf_selector.setSelection(position);
+		        		String selector_state = (String) wf_selector.getSelectedItem();
+		        		selected_waveform = Waveform.valueOf(selector_state.toUpperCase(Locale.getDefault())); 			
+		        	}
+
+		        	public void onNothingSelected(AdapterView<?> arg0){
+		        		selected_waveform = Waveform.SINE; 
+		        	}
+		        });
+		        
 		        
 		        //Create an audiotrack object
 		        audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sr, 
@@ -187,7 +219,24 @@ public class MainActivity extends ActionBarActivity {
 		        		}
 		        		
 		        		//Obtain a sample from a waveform sample function
-		        		samples[i] = sampleSquare();   
+		        		switch(selected_waveform){
+		        		case SINE:
+		        			samples[i] = sampleSine(); 
+		        			break;
+		        		case SQUARE:
+		        			samples[i] = sampleSquare();
+		        			break;
+		        		case SAW:
+		        			samples[i] = sampleSaw();
+		        			break; 
+		        		case CUSTOM1:
+		        			samples[i] = sampleCustom(ph);
+		        			break;
+		        		default: 
+		        			samples[i] = sampleSine();
+		        			break;
+		        		}
+		        		 
 		        		
 		        		//Increment phase index
 		        		ph += ph_increment; 

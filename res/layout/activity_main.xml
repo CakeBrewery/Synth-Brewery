@@ -12,26 +12,35 @@
         android:id="@+id/freq_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/power"
-        android:layout_below="@+id/power"
-        android:layout_marginTop="40dp"
+        android:layout_alignLeft="@+id/frequency"
+        android:layout_centerVertical="true"
         android:text="freq" />
 
     <SeekBar
         android:id="@+id/frequency"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_below="@+id/freq_button"
-        android:layout_marginTop="82dp" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp" />
 
     <ToggleButton
         android:id="@+id/power"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="36dp"
+        android:text="Power" />
+
+    <Spinner
+        android:id="@+id/wf_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:text="Power" />
+        android:layout_marginTop="49dp" 
+    	android:entries="@array/waveform_arrays"
+    	android:prompt="@string/waveform_prompt" />
 
 </RelativeLayout>
