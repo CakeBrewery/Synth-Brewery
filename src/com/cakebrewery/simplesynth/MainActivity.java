@@ -74,6 +74,20 @@ public class MainActivity extends ActionBarActivity {
 		
     	return sample; 
     }
+    
+    public short sampleCustom(double ph_increment){
+		//different wave
+		double value = 0;
+
+		for (int p = 1; p <=4; p++){
+			value += Math.sin(ph*p) / p; 
+		}
+		
+		if ((ph += ph_increment) >= twopi)
+			ph -= twopi;	
+			
+		return (short)(amp*value/1.58);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,7 +168,6 @@ public class MainActivity extends ActionBarActivity {
 		        	double ph_increment = twopi*fr/sr;
 		        	for(int i=0; i < buffsize; i++){
 		        		
-		        		
 		        		if (envelope){
 			        		int envInc = 0;
 			        		if(--envCount <= 0) {
@@ -173,43 +186,10 @@ public class MainActivity extends ActionBarActivity {
 			        		}
 		        		}
 		        		
+		        		//Obtain a sample from a waveform sample function
+		        		samples[i] = sampleSquare();   
 		        		
-		        		
-		        		/*
-		        		//different wave
-		        		double value = 0;
-
-		        		for (int p = 1; p <=4; p++){
-		        			value += Math.sin(ph*p) / p; 
-		        		}
-		        		
-		        		if ((ph += twopi*fr/sr) >= twopi)
-		        			ph -= twopi;	
-		        			
-		        		samples[i] = (short)(amp*value/1.58);
-		        		
-		        		*/
-		        			        	
-		        		samples[i] = sampleSquare();
-		        			        		
-		        		//SawTooth
-		        		/*
-		        		samples[i] =(short)(((double)(amp*ph) / Math.PI)-1);
-		        		if(ph >= twopi)
-		        			ph -= twopi;
-		        		*/
-		        		
-		        		//Square
-		        		/*
-		        		double midpoint = twopi * (0.5);
-		        		if (ph >= twopi)
-		        			ph -= twopi; //or phase = 0; 
-		        		if (ph >= midpoint)
-		        			samples[i] = (short)(-1*amp);
-		        		else
-		        			samples[i] = (short)(1*amp); 
-		        		*/
-		        		
+		        		//Increment phase index
 		        		ph += ph_increment; 
 		        		
 		        	}
