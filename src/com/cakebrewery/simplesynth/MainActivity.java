@@ -156,7 +156,7 @@ public class MainActivity extends ActionBarActivity {
 		        	waveform.type = selected_waveform; 
 		        	waveform.amplitude = amp; 
 		        	
-		        	fifth.setFrequency(sliderval*(3/2));
+		        	fifth.setFrequency(fundamental*(3/2));
 		        	fifth.type = selected_waveform; 
 		        	fifth.amplitude = amp; 
 		        	

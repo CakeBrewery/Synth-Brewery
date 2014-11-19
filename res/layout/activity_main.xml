@@ -34,7 +34,7 @@
 
     <ToggleButton
         android:id="@id/power"
-        android:layout_width="60dp"
+        android:layout_width="68dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/frequency"
         android:layout_alignParentRight="true"
