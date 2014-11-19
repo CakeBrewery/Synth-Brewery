@@ -9,38 +9,73 @@
     tools:context="com.cakebrewery.simplesynth.MainActivity" >
 
     <TextView
-        android:id="@+id/freq_button"
-        android:layout_width="wrap_content"
+        android:textSize="16sp"
+        android:id="@+id/wave1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/frequency"
-        android:layout_centerVertical="true"
-        android:text="freq" />
+        android:text="Waveform 1" />
 
     <SeekBar
         android:id="@+id/frequency"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/freq_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp" />
-
-    <ToggleButton
-        android:id="@+id/power"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="36dp"
-        android:text="Power" />
-
+        android:layout_below="@+id/wave1"
+        android:layout_alignParentLeft="true" />
+    
     <Spinner
         android:id="@+id/wf_selector"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="49dp" 
-    	android:entries="@array/waveform_arrays"
+        android:layout_below="@id/frequency"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/power" 
+        android:entries="@array/waveform_arrays"
     	android:prompt="@string/waveform_prompt" />
+
+    <ToggleButton
+        android:id="@id/power"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/frequency"
+        android:layout_alignParentRight="true"
+        android:text="Power" />
+    
+    
+    
+   <TextView
+        android:textSize="16sp"
+        android:id="@+id/wave2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Waveform 2" 
+   		android:layout_below="@id/power"
+   		android:paddingTop="16dp" />
+
+    <SeekBar
+        android:id="@+id/frequency2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/wave2"
+        android:layout_alignParentLeft="true" />
+    
+    <Spinner
+        android:id="@+id/wf_selector2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/frequency2"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/power2" 
+        android:entries="@array/waveform_arrays"
+    	android:prompt="@string/waveform_prompt" />
+
+    <ToggleButton
+        android:id="@id/power2"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/frequency2"
+        android:layout_alignParentRight="true"
+        android:text="Power" />
+
+
 
 </RelativeLayout>

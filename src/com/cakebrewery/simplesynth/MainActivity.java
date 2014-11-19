@@ -20,10 +20,16 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends ActionBarActivity {
 	
+	//Declarations
+    public enum WaveType {
+    	SINE, SQUARE, SAW, CUSTOM
+    }
+	
 	//Options
 	public final int AMP_MAX = 18000; 
 	public final int AMP_START = 18000; 
     public final double twopi = 2*Math.PI;
+    
 	public final int sr = 44100;
 	
 	//App Components
@@ -34,6 +40,10 @@ public class MainActivity extends ActionBarActivity {
 	ToggleButton powerbtn; 
 	AudioTrack audioTrack; 
 	Spinner wf_selector; 
+	
+	Waveform waveform; 
+	Waveform fifth;
+	Waveform third; 
 
 	//Wave parameters
 	double fundamental = 220; 
@@ -41,73 +51,17 @@ public class MainActivity extends ActionBarActivity {
     
     //State Variables
     boolean envelope = false; 
-    double ph = 0.0; 
-    enum Waveform {
-    	SINE, SQUARE, SAW, CUSTOM1
-    }
-    
-    Waveform selected_waveform = Waveform.SINE;  
-	
-	//Envelope
-	int envCount = 0; 
-	int envIndex = -1; 
-	int endVolume = 0; 
-	
-    public int updateEnvelope(int i, int amp_start, int amp_end, int current_amp, int duration){
-    	int a = (amp_end - amp_start) / duration; 
-    	current_amp = (i * a) + amp_start; 
-    	
-    	if (current_amp > AMP_MAX)
-    		current_amp = AMP_MAX;
-    	return current_amp; 
-    }
-    
-    public short sampleSine(){
-    	return (short)(amp*Math.sin(ph)); 
-    }
-    
-    public short sampleSaw(){
-		short sample = (short)(((double)(amp*ph) / Math.PI)-1);
-		if(ph >= twopi)
-			ph -= twopi;
-		
-		return sample; 
-    }
-    
-    public short sampleSquare(){ 
-    	short sample;
-		double midpoint = twopi * (0.5);
-		
-		if (ph >= twopi)
-			ph -= twopi; //or phase = 0; 
-		if (ph >= midpoint)
-			sample = (short)(-1*amp);
-		else
-			sample = (short)(1*amp); 
-		
-    	return sample; 
-    }
-    
-    public short sampleCustom(double ph_increment){
-		//different wave
-		double value = 0;
 
-		for (int p = 1; p <=4; p++){
-			value += Math.sin(ph*p) / p; 
-		}
-		
-		if ((ph += ph_increment) >= twopi)
-			ph -= twopi;	
-			
-		return (short)(amp*value/1.58);
-    }
+    
+    WaveType selected_waveform = WaveType.SINE;  
+	
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        fundamental = 2616; 
+        fundamental = 261.6; 
         
         t = new Thread() {
         	public void run() {
@@ -126,7 +80,10 @@ public class MainActivity extends ActionBarActivity {
 	        	//point spinner element to GUI widget
 	        	wf_selector = (Spinner) findViewById(R.id.wf_selector); 
 	        	
-	        	 	
+	        	waveform = new Waveform(fundamental, amp, selected_waveform, sr);
+	        	fifth = new Waveform(fundamental, amp, selected_waveform, sr); 
+	        	third = new Waveform(waveform.current_frequency*(5/3), amp, selected_waveform, sr); 
+
 	        	//Seekbar listener
 	        	OnSeekBarChangeListener listener = new OnSeekBarChangeListener() {
 	        		public void onStopTrackingTouch(SeekBar seekBar) { }
@@ -137,7 +94,7 @@ public class MainActivity extends ActionBarActivity {
 	        			progress = progress/(int)fundamental;
 	        			progress = progress*(int)fundamental+(int)fundamental; 
 	        			
-	        			if(fromUser) sliderval = progress/10;
+	        			if(fromUser) sliderval = progress;
 	        		}
 	        	};
 	        	
@@ -154,18 +111,19 @@ public class MainActivity extends ActionBarActivity {
 		        			int position, long id) {
 		        		wf_selector.setSelection(position);
 		        		String selector_state = (String) wf_selector.getSelectedItem();
-		        		selected_waveform = Waveform.valueOf(selector_state.toUpperCase(Locale.getDefault())); 			
+		        		selected_waveform = WaveType.valueOf(selector_state.toUpperCase(Locale.getDefault()));
+		        		
 		        	}
 
 		        	public void onNothingSelected(AdapterView<?> arg0){
-		        		selected_waveform = Waveform.SINE; 
+		        		selected_waveform = WaveType.SINE; 
 		        	}
 		        });
 		        
 		        
 		        //Create an audiotrack object
 		        audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sr, 
-		        										AudioFormat.CHANNEL_OUT_MONO,
+		        										AudioFormat.CHANNEL_OUT_STEREO,
 		        										AudioFormat.ENCODING_PCM_16BIT,
 		        										buffsize,
 		        										AudioTrack.MODE_STREAM);
@@ -174,73 +132,45 @@ public class MainActivity extends ActionBarActivity {
 	        	powerbtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 	        		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 	        			if(isChecked){
-	        				amp = AMP_START; 
+	        				amp = AMP_START;
 	        				envelope = true; 
 	        			} else {
 	        				amp = 0; 
-	        				ph = 0; 
-	        				envIndex = -1; 
-	        				envelope = false; 
+	        				//ph = 0; 
+	        				//envIndex = -1; 
+	        				//envelope = false; 
 	        			}
 	        		}
 	        	});
 		             
 		        short samples[] = new short[buffsize];
 		        //int amp = 20000;
-
-		        double fr = (double)fundamental; 
-
+		        
+		       
 		        //start audio
 		        audioTrack.play();
 		        
 		       	//Main Loop 
 		        while(isRunning){
-		        	fr = sliderval;	
+		        	waveform.setFrequency(sliderval);
+		        	waveform.type = selected_waveform; 
+		        	waveform.amplitude = amp; 
 		        	
-		        	double ph_increment = twopi*fr/sr;
+		        	fifth.setFrequency(sliderval*(3/2));
+		        	fifth.type = selected_waveform; 
+		        	fifth.amplitude = amp; 
+		        	
+		        	third.setFrequency(waveform.current_frequency*(5/3));
+		        	third.type = selected_waveform;
+		        	third.amplitude = amp; 
+		        	
 		        	for(int i=0; i < buffsize; i++){
-		        		
-		        		if (envelope){
-			        		int envInc = 0;
-			        		if(--envCount <= 0) {
-			        			amp = endVolume; 
-			        			if(++envIndex < AMP_MAX){
-			        				endVolume = envIndex;
-			        				envInc = endVolume - amp; 
-			        				if(envCount > 0)
-			        					envInc /= envCount; 
-			        			} else {
-			        				envInc = 0; 	
-			        			}
-			        		}
-			        		else{
-			        			amp += envInc; 
-			        		}
-		        		}
-		        		
-		        		//Obtain a sample from a waveform sample function
-		        		switch(selected_waveform){
-		        		case SINE:
-		        			samples[i] = sampleSine(); 
-		        			break;
-		        		case SQUARE:
-		        			samples[i] = sampleSquare();
-		        			break;
-		        		case SAW:
-		        			samples[i] = sampleSaw();
-		        			break; 
-		        		case CUSTOM1:
-		        			samples[i] = sampleCustom(ph);
-		        			break;
-		        		default: 
-		        			samples[i] = sampleSine();
-		        			break;
-		        		}
-		        		 
-		        		
-		        		//Increment phase index
-		        		ph += ph_increment; 
-		        		
+		        		samples[i] = (short)((waveform.getSample()
+		        					+fifth.getSample())/2);
+		        					//-waveform.getSample()*fifth.getSample());
+		        		waveform.incPhaseIndex();  	
+		        		fifth.incPhaseIndex(); 
+		        		third.incPhaseIndex(); 
 		        	}
 		        	audioTrack.write(samples,  0,  buffsize); 
 		        }   
