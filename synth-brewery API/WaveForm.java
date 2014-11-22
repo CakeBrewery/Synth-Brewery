@@ -4,9 +4,6 @@
  * specific phase indexes (in radians)
  */
 
-
-
-
 public class WaveForm {	
 	
 	//Wave configuration attributes
@@ -88,6 +85,7 @@ public class WaveForm {
 		return sample; 			
 	}	
 	
+	//This function increases the wave's sample offset (or phase index)
 	public void incPhaseIndex(){
 		switch(this.type){
 		
@@ -100,6 +98,7 @@ public class WaveForm {
 		}
 	}
 	
+	//Set the frequency and change parameters accordingly
 	public void setFrequency(double frequency){
 		this.current_frequency = frequency; 
 		this.phase_increment = twopi*this.current_frequency/this.sampling_rate;
