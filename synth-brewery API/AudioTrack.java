@@ -5,7 +5,7 @@ public class AudioTrack
 	private WaveForm waveform1;
 	private int sample_index; 
 	private int samplesPerBeat = 0;
-	private int[] samples;
+	private short[] samples;
 
 	//State variables
 	private double curr_freq;
@@ -25,11 +25,12 @@ public class AudioTrack
 	public void writeBeat(double freq){
 		for(int i = 0; i < this.samplesPerBeat; i++){
 			waveform1.setFrequency(freq); 
-			waveform1.amplitude = 100; 
+			waveform1.amplitude = 4000; 
 
-			samples[sample_index++] = (int)waveform1.getSample();
+			samples[sample_index++] = (short)waveform1.getSample();
 			waveform1.incPhaseIndex();
 		}
+		waveform1.phase_index = 0; 
 	}
 
 	AudioTrack(int sampling_rate, int num_beats, double bpm)
@@ -39,7 +40,7 @@ public class AudioTrack
 		this.sampling_rate = sampling_rate; 
 		this.samplesPerBeat = (int)((sampling_rate*60)/bpm);
 
-		samples = new int[num_beats*samplesPerBeat];
+		samples = new short[num_beats*samplesPerBeat];
 		waveform1 = new WaveForm(0, 0, WaveType.SINE, sampling_rate);
 
 	}

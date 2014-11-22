@@ -18,33 +18,55 @@ public class SynthBrewery
 		final int SAMPLING_RATE = 44100; 
 
 
-		AudioTrack track1 = new AudioTrack(SAMPLING_RATE, 4, 90);
+		AudioTrack track1 = new AudioTrack(SAMPLING_RATE, 8, 120);
 		
 		for (int i = 0; i < 1; i++){
-			track1.writeBeat(220); 
+			track1.writeBeat(440); 
 		}
 
 		for (int i = 0; i < 1; i++){
-			track1.writeBeat(220*5/3);
+			track1.writeBeat(440*5/3);
 		}
 
-		for (int i = 0; i < 2; i++){
-			track1.writeBeat(220*3/2);
+		for (int i = 0; i < 1; i++){
+			track1.writeBeat(440*3/2);
+		}
+
+		for (int i = 0; i < 1; i++){
+			track1.writeBeat(440); 
+		}
+
+		for (int i = 0; i < 1; i++){
+			track1.writeBeat(440); 
+		}
+
+		for (int i = 0; i < 1; i++){
+			track1.writeBeat(440*5/3);
+		}
+
+		for (int i = 0; i < 1; i++){
+			track1.writeBeat(440*3/2);
+		}
+
+		for (int i = 0; i < 1; i++){
+			track1.writeBeat(440); 
 		}
 
 		try{
-			AudioFormat audioFormat = new AudioFormat(SAMPLING_RATE, 8, 1, true, true);
+			AudioFormat audioFormat = new AudioFormat(SAMPLING_RATE, 16, 1, true, false);
 			SourceDataLine dataLine = AudioSystem.getSourceDataLine(audioFormat);
 			dataLine.open(audioFormat);
 			dataLine.start(); 
 			byte[] byteArray = track1.getByteArray(); 
 
-
+			/*
 			for (byte num : byteArray){
 				System.out.println(num); 
 			}
+			*/
 
 			System.out.println(byteArray.length);
+			
 			dataLine.write(byteArray, 0, byteArray.length);
 
 		} catch (Exception e){
