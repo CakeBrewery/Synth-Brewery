@@ -22,35 +22,55 @@ public class SynthBrewery
 		Note: Do not confuse this with an Android AudioTrack, 
 		this is the AuioTrack API inside AuioTrack.java
 		*/
-		AudioTrack track1 = new AudioTrack(SAMPLING_RATE, 8, 120);
-		AudioTrack track2 = new AudioTrack(SAMPLING_RATE, 8, 120);
-		
+		AudioTrack track1 = new AudioTrack(SAMPLING_RATE, 24, 90);
+		AudioTrack track2 = new AudioTrack(SAMPLING_RATE, 24, 90);
 
+		Tuning eq = new Tuning(TuningMode.EQUALLY_TEMPERED); 
+		
 		//Let's test our track1 by writing 8 beats
 		for (int i = 0; i < 2; i++){ //write 2 beats of 440 (A4)
-			track1.writeBeat(440, AMPLITUDE_START); 
-			track2.writeBeat(220, AMPLITUDE_START);
+			track1.writeBeat(eq.getNoteFreq("C_4"), AMPLITUDE_START); 
+			track2.writeBeat(eq.getNoteFreq("C_3"), AMPLITUDE_START);
 		}
 
 		for (int i = 0; i < 2; i++){ //Write 2 beats of A4 M3
-			track1.writeBeat(440*5/3, AMPLITUDE_START);
-			track2.writeBeat(220, AMPLITUDE_START);
+			track1.writeBeat(eq.getNoteFreq("G_4"), AMPLITUDE_START);
+			track2.writeBeat(eq.getNoteFreq("C_3"), AMPLITUDE_START);
 		}
 
 		for (int i = 0; i < 2; i++){ //Write 2 beats of A4 P5
-			track1.writeBeat(440*3/2, AMPLITUDE_START);
-			track2.writeBeat(220, AMPLITUDE_START);
+			track1.writeBeat(eq.getNoteFreq("A_4"), AMPLITUDE_START);
+			track2.writeBeat(eq.getNoteFreq("F_3"), AMPLITUDE_START);
 		}
 
-		for (int i = 0; i < 2; i++){ //Write 2 beats of A4
-			track1.writeBeat(440, AMPLITUDE_START); 
-			track2.writeBeat(220*5/3, AMPLITUDE_START);
+		for (int i = 0; i < 2; i++){ //Write 2 beats of A4 P5
+			track1.writeBeat(eq.getNoteFreq("G_4"), AMPLITUDE_START);
+			track2.writeBeat(eq.getNoteFreq("C_3"), AMPLITUDE_START);
 		}
 
-		Mixer mixer = new Mixer(8, 120, SAMPLING_RATE);
+		for (int i = 0; i < 2; i++){ //Write 2 beats of A4 P5
+			track1.writeBeat(eq.getNoteFreq("F_4"), AMPLITUDE_START);
+			track2.writeBeat(eq.getNoteFreq("F_3"), AMPLITUDE_START);
+		}
+
+		for (int i = 0; i < 2; i++){ //Write 2 beats of A4 P5
+			track1.writeBeat(eq.getNoteFreq("E_4"), AMPLITUDE_START);
+			track2.writeBeat(eq.getNoteFreq("C_3"), AMPLITUDE_START);
+		}
+
+		for (int i = 0; i < 2; i++){ //Write 2 beats of A4 P5
+			track1.writeBeat(eq.getNoteFreq("D_4"), AMPLITUDE_START);
+			track2.writeBeat(eq.getNoteFreq("G_3"), AMPLITUDE_START);
+		}
+
+		for (int i = 0; i < 2; i++){ //Write 2 beats of A4 P5
+			track1.writeBeat(eq.getNoteFreq("C_4"), AMPLITUDE_START);
+			track2.writeBeat(eq.getNoteFreq("C_3"), AMPLITUDE_START);
+		}
+
+		Mixer mixer = new Mixer(24, 120, SAMPLING_RATE);
 		mixer.addTrack(track1, 0); 
 		mixer.addTrack(track2, 0); 
-
 
 		try{
 
@@ -61,11 +81,23 @@ public class SynthBrewery
 			dataLine.start(); 
 
 			//Obtain the samples array of track1 in bytes
-			byte[] track1_bytes = mixer.getByteArray(); 
+			byte[] mixer_bytes = mixer.getByteArray(); 
 			
 			//This writes the audio to the audio buffer and plays it
 			System.out.println("Playing: Writing to audio Buffer..");
-			dataLine.write(track1_bytes, 0, track1_bytes.length);
+
+			int i = 0; 
+			while(i < mixer_bytes.length){
+				byte[] temp = new byte[SAMPLING_RATE];
+				for(int j = 0; j < SAMPLING_RATE; j++){		
+					if (i >= mixer_bytes.length){
+						break;
+					}
+					temp[j] = mixer_bytes[i++];
+						
+				}
+				dataLine.write(temp, 0, temp.length);
+			}
 
 		} catch (Exception e){
 			e.printStackTrace(); 

@@ -49,7 +49,7 @@ public class AudioTrack
 		}
 
 		//Reset phase index for next beat
-		waveform1.phase_index = 1; 
+		waveform1.phase_index = 0; 
 	}
 
 	int getLength()
