@@ -59,6 +59,8 @@ public class WaveForm {
     //This math formula tries to digitally emulate a violin
     /* how it works: 
     	see http://js.do/blog/sound-waves-with-javascript/
+    	The sound is a sum of harmonics with decreasing
+    	amplitudes
     */
     private double sampleviolin(){
     	int i = (int)((phase_index*sampling_rate)/(double)(current_frequency*twopi));
