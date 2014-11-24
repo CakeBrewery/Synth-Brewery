@@ -45,7 +45,7 @@ public class AudioTrack
 		}
 
 		//Reset phase index for next beat
-		waveform1.phase_index = 0; 
+		waveform1.phase_index = 1; 
 	}
 
 	AudioTrack(int sampling_rate, int num_beats, double bpm)
@@ -58,7 +58,7 @@ public class AudioTrack
 		samples = new short[num_beats*samplesPerBeat];
 
 		//Instantiate a new Waveform to produce sound
-		waveform1 = new WaveForm(0, 0, WaveType.SINE, sampling_rate);
+		waveform1 = new WaveForm(0, 0, WaveType.VIOLIN, sampling_rate);
 
 	}
 }

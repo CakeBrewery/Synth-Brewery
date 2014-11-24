@@ -55,6 +55,29 @@ public class WaveForm {
 		
     	return sample; 
     }
+
+    private double sampleviolin(){
+    	int i = (int)((phase_index*sampling_rate)/(double)(current_frequency*twopi));
+    	double t = (double)i/(double)sampling_rate;
+
+    	double sample; 
+    	double  y = 0; 
+    	double A_total = 0; 
+
+    	for(int harm = 1; harm < 7; harm++){
+    		double f2 = (double)current_frequency*(double)harm;
+    		double A = (double)1/harm; 
+   			A_total += (double)A;
+   			y += A*Math.sin(f2*twopi*t);
+    	}
+
+    	sample = y/A_total;
+    	sample *= (1-0.5*Math.sin(twopi*6*t));
+    	sample *= (1-Math.exp(-(t*3)));
+    	sample *= amplitude*4;
+
+    	return sample; 
+    }
     
     //In the future this will allow the user to create his own formulas for waves
     private double sampleCustom(){
@@ -77,6 +100,9 @@ public class WaveForm {
 		case CUSTOM:
 			sample = sampleCustom();
 			break; 
+		case VIOLIN:
+			sample = sampleviolin();
+			break; 
 		default:
 			sample = sampleSine();
 			break;
@@ -88,7 +114,10 @@ public class WaveForm {
 	//This function increases the wave's sample offset (or phase index)
 	public void incPhaseIndex(){
 		switch(this.type){
-		
+
+		case VIOLIN:
+			this.phase_index += this.phase_increment;
+			break;	
 		default:
 			this.phase_index += this.phase_increment; 
 		
