@@ -56,6 +56,10 @@ public class WaveForm {
     	return sample; 
     }
 
+    //This math formula tries to digitally emulate a violin
+    /* how it works: 
+    	see http://js.do/blog/sound-waves-with-javascript/
+    */
     private double sampleviolin(){
     	int i = (int)((phase_index*sampling_rate)/(double)(current_frequency*twopi));
     	double t = (double)i/(double)sampling_rate;
