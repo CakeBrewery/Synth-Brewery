@@ -62,7 +62,7 @@ public class WaveForm {
     	The sound is a sum of harmonics with decreasing
     	amplitudes
     */
-    private double sampleviolin(){
+    private double sampleViolin(){
     	int i = (int)((phase_index*sampling_rate)/(double)(current_frequency*twopi));
     	double t = (double)i/(double)sampling_rate;
 
@@ -107,7 +107,7 @@ public class WaveForm {
 			sample = sampleCustom();
 			break; 
 		case VIOLIN:
-			sample = sampleviolin();
+			sample = sampleViolin();
 			break; 
 		default:
 			sample = sampleSine();
