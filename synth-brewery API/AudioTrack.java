@@ -11,7 +11,7 @@ public class AudioTrack
 	private WaveForm waveform1;
 	private int sample_index; 
 	private int samplesPerBeat = 0;
-	private short[] samples;
+	public short[] samples;
 
 	//State variables
 	private double curr_freq; //Current frequency of the track
@@ -33,6 +33,10 @@ public class AudioTrack
 		return samples_in_bytes; 
 	}
 
+	public short[] getShortArray(){
+		return this.samples; 
+	}
+
 	/* This function writes a single beat (for example there would 
 		4 beats on a 4:4 measure) to the current audio track */
 	public void writeBeat(double freq, int volume){
@@ -48,17 +52,24 @@ public class AudioTrack
 		waveform1.phase_index = 1; 
 	}
 
-	AudioTrack(int sampling_rate, int num_beats, double bpm)
+	int getLength()
+	{
+		return samples.length; 
+	}
+
+	AudioTrack(int sampling_rate, int length, double bpm)
 	{
 		sample_index = 0;  
 		this.curr_bpm = bpm; 
 		this.sampling_rate = sampling_rate; 
 		this.samplesPerBeat = (int)((sampling_rate*60)/bpm);
 
-		samples = new short[num_beats*samplesPerBeat];
+		samples = new short[length*samplesPerBeat];
 
 		//Instantiate a new Waveform to produce sound
 		waveform1 = new WaveForm(0, 0, WaveType.VIOLIN, sampling_rate);
 
 	}
+
+
 }

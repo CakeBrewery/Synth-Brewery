@@ -23,24 +23,33 @@ public class SynthBrewery
 		this is the AuioTrack API inside AuioTrack.java
 		*/
 		AudioTrack track1 = new AudioTrack(SAMPLING_RATE, 8, 120);
+		AudioTrack track2 = new AudioTrack(SAMPLING_RATE, 8, 120);
 		
 
 		//Let's test our track1 by writing 8 beats
 		for (int i = 0; i < 2; i++){ //write 2 beats of 440 (A4)
 			track1.writeBeat(440, AMPLITUDE_START); 
+			track2.writeBeat(220, AMPLITUDE_START);
 		}
 
 		for (int i = 0; i < 2; i++){ //Write 2 beats of A4 M3
 			track1.writeBeat(440*5/3, AMPLITUDE_START);
+			track2.writeBeat(220, AMPLITUDE_START);
 		}
 
 		for (int i = 0; i < 2; i++){ //Write 2 beats of A4 P5
 			track1.writeBeat(440*3/2, AMPLITUDE_START);
+			track2.writeBeat(220, AMPLITUDE_START);
 		}
 
 		for (int i = 0; i < 2; i++){ //Write 2 beats of A4
 			track1.writeBeat(440, AMPLITUDE_START); 
+			track2.writeBeat(220*5/3, AMPLITUDE_START);
 		}
+
+		Mixer mixer = new Mixer(8, 120, SAMPLING_RATE);
+		mixer.addTrack(track1, 0); 
+		mixer.addTrack(track2, 0); 
 
 
 		try{
@@ -52,7 +61,7 @@ public class SynthBrewery
 			dataLine.start(); 
 
 			//Obtain the samples array of track1 in bytes
-			byte[] track1_bytes = track1.getByteArray(); 
+			byte[] track1_bytes = mixer.getByteArray(); 
 			
 			//This writes the audio to the audio buffer and plays it
 			System.out.println("Playing: Writing to audio Buffer..");
