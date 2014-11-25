@@ -22,8 +22,7 @@ public class AudioTrack
 		bytes (8 bits). Since the API produces the samples
 		in short we have to convert them to 2 consecutive bytes
 		in the stream */
-	public byte[] getByteArray()
-	{
+	public byte[] getByteArray(){
 		byte[] samples_in_bytes = new byte[samples.length*2]; 
 		for (int i = 0; i < samples.length; i++){
 			samples_in_bytes[i*2] = (byte) (samples[i] & 0xff);
@@ -50,7 +49,6 @@ public class AudioTrack
 			waveform1.incPhaseIndex(); 
 		}
 
-
 		for(int i = envelope; i < this.samplesPerBeat-envelope ; i++){
 			samples[sample_index++] = (short)waveform1.getSample();
 			waveform1.incPhaseIndex();
@@ -61,18 +59,13 @@ public class AudioTrack
 			samples[sample_index++] = (short)(waveform1.getSample()*(1-(double)i/envelope));
 			waveform1.incPhaseIndex(); 
 		}
-
-		//Reset phase index for next beat
-		//waveform1.phase_index = 0; 
 	}
 
-	int getLength()
-	{
+	int getLength(){
 		return samples.length; 
 	}
 
-	AudioTrack(int sampling_rate, int length, double bpm)
-	{
+	AudioTrack(int sampling_rate, int length, double bpm, WaveType wavetype){
 		sample_index = 0;  
 		this.curr_bpm = bpm; 
 		this.sampling_rate = sampling_rate; 
@@ -81,9 +74,6 @@ public class AudioTrack
 		samples = new short[length*samplesPerBeat];
 
 		//Instantiate a new Waveform to produce sound
-		waveform1 = new WaveForm(0, 0, WaveType.SQUARE, sampling_rate);
-
+		waveform1 = new WaveForm(0, 0, wavetype, sampling_rate);
 	}
-
-
 }

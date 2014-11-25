@@ -4,8 +4,8 @@
  * specific phase indexes (in radians)
  */
 
-public class WaveForm {	
-	
+public class WaveForm
+{	
 	//Wave configuration attributes
 	int sampling_rate; 
 	int amplitude;
@@ -86,9 +86,9 @@ public class WaveForm {
     }
     
     //In the future this will allow the user to create his own formulas for waves
-    private double sampleCustom(){
-    	return (double)(this.amplitude*Math.sin(this.phase_index));
-    }
+    //They just have to override the following two methods with their own math
+    private double sampleCustom(){return -1;}
+    public void incPhaseIndexCustom(){}
 	
 	/* Returns a sample of the waveform at the current phase index */
 	public double getSample(){
@@ -116,10 +116,14 @@ public class WaveForm {
 		
 		return sample; 			
 	}	
-	
+
 	//This function increases the wave's sample offset (or phase index)
 	public void incPhaseIndex(){
 		switch(this.type){
+
+		case CUSTOM: 
+			incPhaseIndexCustom(); 
+			break;
 
 		case VIOLIN:
 			this.phase_index += this.phase_increment;

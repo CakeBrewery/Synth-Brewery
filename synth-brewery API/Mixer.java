@@ -1,6 +1,7 @@
 import java.util.*;
 
-class Mixer{
+class Mixer
+{
 	List<AudioTrack> audiotracks; 
 	List<Integer> offset_table;
 	private int sample_index;
@@ -33,9 +34,10 @@ class Mixer{
 		offset_table.add(sample_offset);
 	}
 
+
+	//Writes an array of short with all the samples of the mixed tracks. 
+	//It also returns such array
 	public short[] getShortArray(){
-
-
 
 		for(int i=0; i < total_samples; i++){
 			for(int j=0; j < audiotracks.size(); j++){
@@ -48,6 +50,7 @@ class Mixer{
 		return samples;
 	}
 
+	//Obtains an array of the mixed tracks 
 	public byte[] getByteArray(){
 		getShortArray(); 
 
