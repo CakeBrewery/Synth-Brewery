@@ -40,16 +40,30 @@ public class AudioTrack
 	/* This function writes a single beat (for example there would 
 		4 beats on a 4:4 measure) to the current audio track */
 	public void writeBeat(double freq, int volume){
-		for(int i = 0; i < this.samplesPerBeat; i++){
-			waveform1.setFrequency(freq); 
-			waveform1.amplitude = volume; 
+		waveform1.setFrequency(freq); 
+		waveform1.amplitude = volume; 
+		int envelope = 2000; 
 
+		//Applying starting envelope
+		for(int i = 0; i < envelope; i++){
+			samples[sample_index++] = (short)(waveform1.getSample()*(i)*1/envelope);
+			waveform1.incPhaseIndex(); 
+		}
+
+
+		for(int i = envelope; i < this.samplesPerBeat-envelope ; i++){
 			samples[sample_index++] = (short)waveform1.getSample();
 			waveform1.incPhaseIndex();
 		}
 
+		//Applying ending envelope
+		for(int i = 0; i < envelope; i++){
+			samples[sample_index++] = (short)(waveform1.getSample()*(1-(double)i/envelope));
+			waveform1.incPhaseIndex(); 
+		}
+
 		//Reset phase index for next beat
-		waveform1.phase_index = 0; 
+		//waveform1.phase_index = 0; 
 	}
 
 	int getLength()
@@ -67,7 +81,7 @@ public class AudioTrack
 		samples = new short[length*samplesPerBeat];
 
 		//Instantiate a new Waveform to produce sound
-		waveform1 = new WaveForm(0, 0, WaveType.VIOLIN, sampling_rate);
+		waveform1 = new WaveForm(0, 0, WaveType.SQUARE, sampling_rate);
 
 	}
 

@@ -80,7 +80,7 @@ public class WaveForm {
     	sample = y/A_total;
     	sample *= (1-0.5*Math.sin(twopi*6*t));
     	sample *= (1-Math.exp(-(t*3)));
-    	sample *= amplitude*4;
+    	sample *= amplitude*2;
 
     	return sample; 
     }

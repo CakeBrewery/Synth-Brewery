@@ -22,8 +22,11 @@ public class SynthBrewery
 		Note: Do not confuse this with an Android AudioTrack, 
 		this is the AuioTrack API inside AuioTrack.java
 		*/
-		AudioTrack track1 = new AudioTrack(SAMPLING_RATE, 24, 90);
-		AudioTrack track2 = new AudioTrack(SAMPLING_RATE, 24, 90);
+		int song_length = 24; 
+		double song_bpm= 100;
+
+		AudioTrack track1 = new AudioTrack(SAMPLING_RATE, song_length, song_bpm);
+		AudioTrack track2 = new AudioTrack(SAMPLING_RATE, song_length, song_bpm);
 
 		Tuning eq = new Tuning(TuningMode.EQUALLY_TEMPERED); 
 		
@@ -68,7 +71,7 @@ public class SynthBrewery
 			track2.writeBeat(eq.getNoteFreq("C_3"), AMPLITUDE_START);
 		}
 
-		Mixer mixer = new Mixer(24, 120, SAMPLING_RATE);
+		Mixer mixer = new Mixer(song_length, song_bpm, SAMPLING_RATE);
 		mixer.addTrack(track1, 0); 
 		mixer.addTrack(track2, 0); 
 
