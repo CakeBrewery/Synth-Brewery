@@ -11,7 +11,7 @@ public class AudioTrack
 	private WaveForm waveform1;
 	private int sample_index; 
 	private int samplesPerBeat = 0;
-	private short[] samples;
+	public short[] samples;
 
 	//State variables
 	private double curr_freq; //Current frequency of the track
@@ -22,8 +22,7 @@ public class AudioTrack
 		bytes (8 bits). Since the API produces the samples
 		in short we have to convert them to 2 consecutive bytes
 		in the stream */
-	public byte[] getByteArray()
-	{
+	public byte[] getByteArray(){
 		byte[] samples_in_bytes = new byte[samples.length*2]; 
 		for (int i = 0; i < samples.length; i++){
 			samples_in_bytes[i*2] = (byte) (samples[i] & 0xff);
@@ -33,32 +32,55 @@ public class AudioTrack
 		return samples_in_bytes; 
 	}
 
+	public short[] getShortArray(){
+		return this.samples; 
+	}
+
+//	public void writeHalfBeat(double freq, int volume){
+//		waveform1.setFrequency(freq); 
+//		waveform1.amplitude = volume; 
+//		int envelope = 2000; 
+//		
+//		
+//	}
 	/* This function writes a single beat (for example there would 
 		4 beats on a 4:4 measure) to the current audio track */
 	public void writeBeat(double freq, int volume){
-		for(int i = 0; i < this.samplesPerBeat; i++){
-			waveform1.setFrequency(freq); 
-			waveform1.amplitude = volume; 
+		waveform1.setFrequency(freq); 
+		waveform1.amplitude = volume; 
+		int envelope = 2000; 
 
+		//Applying starting envelope
+		for(int i = 0; i < envelope; i++){
+			samples[sample_index++] = (short)(waveform1.getSample()*(i)*1/envelope);
+			waveform1.incPhaseIndex(); 
+		}
+
+		for(int i = envelope; i < this.samplesPerBeat-envelope ; i++){
 			samples[sample_index++] = (short)waveform1.getSample();
 			waveform1.incPhaseIndex();
 		}
 
-		//Reset phase index for next beat
-		waveform1.phase_index = 0; 
+		//Applying ending envelope
+		for(int i = 0; i < envelope; i++){
+			samples[sample_index++] = (short)(waveform1.getSample()*(1-(double)i/envelope));
+			waveform1.incPhaseIndex(); 
+		}
 	}
 
-	AudioTrack(int sampling_rate, int num_beats, double bpm)
-	{
+	int getLength(){
+		return samples.length; 
+	}
+
+	AudioTrack(int sampling_rate, int length, double bpm, WaveType wavetype){
 		sample_index = 0;  
 		this.curr_bpm = bpm; 
 		this.sampling_rate = sampling_rate; 
 		this.samplesPerBeat = (int)((sampling_rate*60)/bpm);
 
-		samples = new short[num_beats*samplesPerBeat];
+		samples = new short[length*samplesPerBeat];
 
 		//Instantiate a new Waveform to produce sound
-		waveform1 = new WaveForm(0, 0, WaveType.SINE, sampling_rate);
-
+		waveform1 = new WaveForm(0, 0, wavetype, sampling_rate);
 	}
 }
