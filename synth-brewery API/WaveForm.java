@@ -81,10 +81,35 @@ public class WaveForm
     	sample *= (1-0.5*Math.sin(twopi*6*t));
     	sample *= (1-Math.exp(-(t*3)));
     	sample *= amplitude*2;
-
+    	
     	return sample; 
     }
     
+    //This method tried to simulate a bell. 
+    //Not works well. 
+    private double sampleBell(){
+    	double samples;
+    	int i = (int)((phase_index*sampling_rate)/(double)(current_frequency*twopi));
+    	double t = (double)i/(double)sampling_rate;
+    	double w = 2 * pi * (double)current_frequency*t;
+    	samples = Math.cos(w + 8*Math.sin(w * 7 /5) * Math.exp(-t*4));
+    	samples *= Math.exp(-t*3);
+    	samples *= amplitude*2;
+    	return samples;
+    }
+    
+    
+    //This method tries to simulate a Flute sound.
+    private double sampleFlute(){
+    	double samples;
+    	int i = (int)((phase_index*sampling_rate)/(double)(current_frequency*twopi));
+    	double t = (double)i/(double)sampling_rate;
+    	double w = 2 * pi * (double)current_frequency * t;
+    	samples = (Math.sin(w) + 0.75 * Math.sin(w*3) + 0.5 * Math.sin(w * 5) + 0.14 * Math.sin(w *7) + 0.5 * Math.sin(w * 9) + 0.12 * Math.sin(w * 11) + 0.17 * Math.sin(w * 13)) / (1 + 0.75 + 0.5 + 0.14 + 0.17);
+    	samples *= Math.exp(t/1.5); 
+    	samples *= Math.exp(-1 * t * 1.5);
+    	return samples;
+    }
     //In the future this will allow the user to create his own formulas for waves
     //They just have to override the following two methods with their own math
     private double sampleCustom(){return -1;}
@@ -109,6 +134,11 @@ public class WaveForm
 		case VIOLIN:
 			sample = sampleViolin();
 			break; 
+		case BELL:
+			sample = sampleBell();
+			break;
+		case FLUTE:
+			sample = sampleFlute();
 		default:
 			sample = sampleSine();
 			break;
@@ -128,6 +158,9 @@ public class WaveForm
 		case VIOLIN:
 			this.phase_index += this.phase_increment;
 			break;	
+		case FLUTE:
+			this.phase_index += this.phase_increment;
+			break;
 		default:
 			this.phase_index += this.phase_increment; 
 		
