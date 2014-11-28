@@ -61,12 +61,40 @@ public class AudioTrack
 		}
 	}
 
+
+	/*Makes a write ot length note. For example, a half note would be 
+		write(1/2, freq, volume) */
+	public void write(double note, double freq, int volume){
+		waveform1.setFrequency(freq); 
+		waveform1.amplitude = volume; 
+		int sample_num = (int)(note * (double)samplesPerBeat);
+		int envelope = (int)((double)sample_num/20); 
+
+
+		//Applying initial envelope
+		for(int i = 0; i < envelope; i++){
+			samples[sample_index++] = (short)(waveform1.getSample()*((double)i/envelope));
+			waveform1.incPhaseIndex();
+		}
+
+		for(int i = envelope; i < sample_num-envelope ; i++){
+			samples[sample_index++] = (short)waveform1.getSample();
+			waveform1.incPhaseIndex();
+		}
+
+		//Ampplying ending envelope
+		for(int i = 0; i < envelope; i++){
+			samples[sample_index++] = (short)(waveform1.getSample()*(1-(double)i/envelope));
+			waveform1.incPhaseIndex(); 
+		}
+	}
+
 	/* This method writes a single beat or quarter note (for example there would 
 		4 beats on a 4:4 measure) to the current audio track */
 	public void writeBeat(double freq, int volume){
 		waveform1.setFrequency(freq); 
 		waveform1.amplitude = volume; 
-		int envelope = 2000; 
+		int envelope = this.samplesPerBeat/20; 
 
 		//Applying starting envelope
 		for(int i = 0; i < envelope; i++){
