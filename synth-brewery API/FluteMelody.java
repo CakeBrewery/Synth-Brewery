@@ -3,7 +3,7 @@ import java.util.*;
 import java.io.FileInputStream; 
 import java.io.FileInputStream;
 
-public class SynthBrewery
+public class FluteMelody 
 {
 	public static void main(String[] args){
 
@@ -25,14 +25,13 @@ public class SynthBrewery
 
 		//AudioTrack track1 = new AudioTrack(SAMPLING_RATE, song_length, song_bpm, WaveType.VIOLIN);
 		//AudioTrack track2 = new AudioTrack(SAMPLING_RATE, song_length, song_bpm, WaveType.CLARINET);
-		AudioTrack track2 = new AudioTrack(SAMPLING_RATE, song_length, song_bpm, WaveType.VIOLIN); 
+		//AudioTrack track2 = new AudioTrack(SAMPLING_RATE, song_length, song_bpm, WaveType.VIOLIN); 
 		AudioTrack track3 = new AudioTrack(SAMPLING_RATE, song_length, song_bpm, WaveType.FLUTE);
 
 		//Initialize a tuning object so we can get Equally tempered frequencies
 		Tuning et = new Tuning(TuningMode.EQUALLY_TEMPERED); 
 		for(int i = 0; i < 2; i++){
 			track3.writeBeat(et.getNoteFreq("E_4"), AMPLITUDE_START);
-			track2.writeBeat(et.getNoteFreq("E_3"), AMPLITUDE_START); 
 		}
 			
 		for(int i = 0; i < 1; i++){
@@ -74,7 +73,7 @@ public class SynthBrewery
 		Mixer mixer = new Mixer(song_length, song_bpm, SAMPLING_RATE);
 
 		mixer.addTrack(track3, 0); 
-		mixer.addTrack(track2, 0); 
+		//mixer.addTrack(track2, 0); 
 		mixer.play(); 
 	}
 }
