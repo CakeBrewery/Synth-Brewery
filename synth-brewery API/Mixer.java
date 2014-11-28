@@ -99,4 +99,37 @@ class Mixer
 			e.printStackTrace(); 
 		}
 	}
+
+	public void playFrom(int starting_beat){
+		int samplesPerBeat = (int)((sampling_rate*60)/bpm);
+		//Using standard java libraries for sound playback
+		try{
+			//instantiate javax.sound.sampled structures for playback
+			AudioFormat audioFormat = new AudioFormat(this.sampling_rate, 16, 1, true, false);
+			SourceDataLine dataLine = AudioSystem.getSourceDataLine(audioFormat);
+			dataLine.open(audioFormat);
+			dataLine.start(); 
+
+			//Obtain the samples array of track1 in bytes
+			byte[] mixer_bytes = this.getByteArray(); 
+			
+			//This writes the audio to the audio buffer and plays it
+			System.out.println("Playing: Writing to audio Buffer..");
+
+			int i = starting_beat*samplesPerBeat; 
+			while(i < mixer_bytes.length){
+				byte[] temp = new byte[this.sampling_rate];
+				for(int j = 0; j < this.sampling_rate; j++){		
+					if (i >= mixer_bytes.length){
+						break;
+					}
+					temp[j] = mixer_bytes[i++];
+				}
+				dataLine.write(temp, 0, temp.length);
+			}
+
+		} catch (Exception e){
+			e.printStackTrace(); 
+		}
+	}
 }
